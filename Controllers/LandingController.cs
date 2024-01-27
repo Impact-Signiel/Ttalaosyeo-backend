@@ -2,9 +2,10 @@
 
 using Microsoft.EntityFrameworkCore;
 using signiel.Contexts;
-using signiel.Models;
 using signiel.Models.Responses;
 using signiel.Services;
+
+namespace signiel.Controllers;
 
 [ApiController]
 [Route("api/landing")]

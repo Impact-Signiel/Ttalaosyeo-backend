@@ -11,5 +11,7 @@ public partial class User
 
     public string Nickname { get; set; } = null!;
 
+    public string Password { get; set; } = null!;
+
     public virtual ICollection<Trip> Trips { get; set; } = new List<Trip>();
 }

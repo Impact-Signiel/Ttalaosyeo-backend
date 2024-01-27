@@ -341,6 +341,9 @@ public partial class SignielContext : DbContext
             entity.Property(e => e.Nickname)
                 .HasMaxLength(50)
                 .HasColumnName("nickname");
+            entity.Property(e => e.Password)
+                .HasMaxLength(128)
+                .HasColumnName("password");
         });
 
         OnModelCreatingPartial(modelBuilder);

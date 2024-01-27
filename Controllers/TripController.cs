@@ -1,5 +1,3 @@
-
-
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Models.Requests;
@@ -8,14 +6,16 @@ using signiel.Models.Requests;
 using signiel.Models.Responses;
 using signiel.Services;
 
+namespace signiel.Controllers;
+
 [ApiController]
 [Route("api/trips")]
-public class TripsController : ControllerBase {
+public class TripController : ControllerBase {
     private readonly ILogger<LandingController> _logger;
     private readonly SignielContext _context;
     private readonly TripService _tripService;
 
-    public TripsController(ILogger<LandingController> logger, SignielContext context, TripService tripSearchService) {
+    public TripController(ILogger<LandingController> logger, SignielContext context, TripService tripSearchService) {
         _logger = logger;
         _context = context;
         _tripService = tripSearchService;
@@ -109,6 +109,10 @@ public class TripsController : ControllerBase {
         });
     }
 
+    /// <summary>
+    /// 투어 상세 정보를 가져옵니다.
+    /// </summary>
+    /// <param name="id">투어 ID</param>
     [HttpGet("{id}")]
     public async Task<APIResponse<TripDetail>> GetTrip(
         [FromRoute, Range(1, ulong.MaxValue)] ulong id) {
