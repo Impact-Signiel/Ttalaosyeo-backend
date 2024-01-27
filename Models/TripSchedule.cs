@@ -13,5 +13,7 @@ public partial class TripSchedule
 
     public string Description { get; set; } = null!;
 
+    public virtual ICollection<TripDetail> TripDetails { get; set; } = new List<TripDetail>();
+
     public virtual Trip TripNavigation { get; set; } = null!;
 }

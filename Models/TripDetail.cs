@@ -9,11 +9,15 @@ public partial class TripDetail
 
     public ulong Trip { get; set; }
 
+    public ulong Schedule { get; set; }
+
     public string Location { get; set; } = null!;
 
     public string Title { get; set; } = null!;
 
     public string Description { get; set; } = null!;
+
+    public virtual TripSchedule ScheduleNavigation { get; set; } = null!;
 
     public virtual ICollection<TripDetailImage> TripDetailImages { get; set; } = new List<TripDetailImage>();
 

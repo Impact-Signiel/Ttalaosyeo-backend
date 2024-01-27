@@ -13,6 +13,12 @@ public partial class Trip
 
     public string Content { get; set; } = null!;
 
+    public string Location { get; set; } = null!;
+
+    public string Thumbnail { get; set; } = null!;
+
+    public uint Personnel { get; set; }
+
     public long Price { get; set; }
 
     public uint Nights { get; set; }

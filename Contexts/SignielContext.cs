@@ -111,12 +111,21 @@ public partial class SignielContext : DbContext
             entity.Property(e => e.Days)
                 .HasColumnType("int(10) unsigned")
                 .HasColumnName("days");
+            entity.Property(e => e.Location)
+                .HasMaxLength(100)
+                .HasColumnName("location");
             entity.Property(e => e.Nights)
                 .HasColumnType("int(10) unsigned")
                 .HasColumnName("nights");
+            entity.Property(e => e.Personnel)
+                .HasColumnType("int(10) unsigned")
+                .HasColumnName("personnel");
             entity.Property(e => e.Price)
                 .HasColumnType("bigint(20)")
                 .HasColumnName("price");
+            entity.Property(e => e.Thumbnail)
+                .HasMaxLength(500)
+                .HasColumnName("thumbnail");
             entity.Property(e => e.Title)
                 .HasMaxLength(100)
                 .HasColumnName("title");
@@ -132,6 +141,8 @@ public partial class SignielContext : DbContext
 
             entity.ToTable("trip_details");
 
+            entity.HasIndex(e => e.Schedule, "FK_trip_details_trip_schedules");
+
             entity.HasIndex(e => e.Trip, "TRIP_DETAILS_TRIP_FK");
 
             entity.Property(e => e.Id)
@@ -143,12 +154,19 @@ public partial class SignielContext : DbContext
             entity.Property(e => e.Location)
                 .HasMaxLength(50)
                 .HasColumnName("location");
+            entity.Property(e => e.Schedule)
+                .HasColumnType("bigint(20) unsigned")
+                .HasColumnName("schedule");
             entity.Property(e => e.Title)
                 .HasMaxLength(50)
                 .HasColumnName("title");
             entity.Property(e => e.Trip)
                 .HasColumnType("bigint(20) unsigned")
                 .HasColumnName("trip");
+
+            entity.HasOne(d => d.ScheduleNavigation).WithMany(p => p.TripDetails)
+                .HasForeignKey(d => d.Schedule)
+                .HasConstraintName("FK_trip_details_trip_schedules");
 
             entity.HasOne(d => d.TripNavigation).WithMany(p => p.TripDetails)
                 .HasForeignKey(d => d.Trip)

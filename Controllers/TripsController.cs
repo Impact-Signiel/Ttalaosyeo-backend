@@ -63,13 +63,16 @@ public class TripsController : ControllerBase {
             Trips = await _tripService.Query(TripSearchFilter.CombinedParse(request.Queries), 0, 15)
                 .Select(trip => new TripInfo {
                     Id = trip.Id,
-                    AuthorId = trip.Author,
-                    Author = trip.AuthorNavigation.Nickname,
+                    Author = new() {
+                        Id = trip.Author,
+                        Nickname = trip.AuthorNavigation.Nickname,
+                    },
                     Title = trip.Title,
                     Price = trip.Price,
                     Nights = trip.Nights,
                     Days = trip.Days,
-                    Tags = trip.TripTags.Select(tag => new KeyValuePair<string, string>(tag.Key, tag.Value)).ToList()
+                    Tags = trip.TripTags.Select(tag => new KeyValuePair<string, string>(tag.Key, tag.Value)).ToList(),
+                    Thumbnail = trip.Thumbnail,
                 }).ToListAsync()
         });
     }
@@ -92,14 +95,67 @@ public class TripsController : ControllerBase {
             Trips = await query
                 .Select(trip => new TripInfo {
                     Id = trip.Id,
-                    AuthorId = trip.Author,
-                    Author = trip.AuthorNavigation.Nickname,
+                    Author = new() {
+                        Id = trip.Author,
+                        Nickname = trip.AuthorNavigation.Nickname,
+                    },
                     Title = trip.Title,
                     Price = trip.Price,
                     Nights = trip.Nights,
                     Days = trip.Days,
-                    Tags = trip.TripTags.Select(tag => new KeyValuePair<string, string>(tag.Key, tag.Value)).ToList()
+                    Tags = trip.TripTags.Select(tag => new KeyValuePair<string, string>(tag.Key, tag.Value)).ToList(),
+                    Thumbnail = trip.Thumbnail,
                 }).ToListAsync()
         });
+    }
+
+    [HttpGet("{id}")]
+    public async Task<APIResponse<TripDetail>> GetTrip(
+        [FromRoute, Range(1, ulong.MaxValue)] ulong id) {
+        var trip = await (
+            from t
+            in _context.Trips
+            where t.Id == id
+            select new TripDetail {
+                Id = t.Id,
+                Author = new() {
+                    Id = t.Author,
+                    Nickname = t.AuthorNavigation.Nickname,
+                },
+                Title = t.Title,
+                Content = t.Content,
+                Location = t.Location,
+                Personnel = t.Personnel,
+                Price = t.Price,
+                Nights = t.Nights,
+                Days = t.Days,
+                CreatedAt = t.CreatedAt,
+                Tags = t.TripTags.Select(tag => new KeyValuePair<string, string>(tag.Key, tag.Value)).ToList(),
+                Thumbnail = t.Thumbnail,
+                Schedules = t.TripSchedules.Select(schedule => new TripScheduleDetail {
+                    Day = 0,
+                    Title = schedule.Title,
+                    Description = schedule.Description,
+                    Locations = schedule.TripDetails.Select(location => new TripScheduleLocationDetail {
+                        Location = location.Location,
+                        Title = location.Title,
+                        Description = location.Description,
+                        Images = location.TripDetailImages.Select(image => image.Image).ToList(),
+                    }).ToList(),
+                }).ToList(),
+            }
+        ).FirstOrDefaultAsync();
+
+        if (trip == null) {
+            HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
+            return APIResponse<TripDetail>.FromError("Not Found");
+        }
+
+
+        foreach (var schedule in trip.Schedules) {
+            schedule.Day = trip.Schedules.IndexOf(schedule) + 1;
+        }
+
+        return APIResponse<TripDetail>.FromData(trip);
     }
 }

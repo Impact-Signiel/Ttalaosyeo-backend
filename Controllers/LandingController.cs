@@ -38,13 +38,16 @@ public class LandingController : ControllerBase {
             section.Trips = await _tripService.Query(section.Query, 0, 4)
                 .Select(trip => new TripInfo {
                     Id = trip.Id,
-                    AuthorId = trip.Author,
-                    Author = trip.AuthorNavigation.Nickname,
+                    Author = new() {
+                        Id = trip.Author,
+                        Nickname = trip.AuthorNavigation.Nickname,
+                    },
                     Title = trip.Title,
                     Price = trip.Price,
                     Nights = trip.Nights,
                     Days = trip.Days,
-                    Tags = trip.TripTags.Select(tag => new KeyValuePair<string, string>(tag.Key, tag.Value)).ToList()
+                    Tags = trip.TripTags.Select(tag => new KeyValuePair<string, string>(tag.Key, tag.Value)).ToList(),
+                    Thumbnail = trip.Thumbnail,
                 }).ToListAsync();
         }
 
