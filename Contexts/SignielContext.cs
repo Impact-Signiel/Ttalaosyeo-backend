@@ -145,8 +145,6 @@ public partial class SignielContext : DbContext
 
             entity.HasIndex(e => e.Schedule, "FK_trip_details_trip_schedules");
 
-            entity.HasIndex(e => e.Trip, "TRIP_DETAILS_TRIP_FK");
-
             entity.Property(e => e.Id)
                 .HasColumnType("bigint(20) unsigned")
                 .HasColumnName("id");
@@ -162,17 +160,10 @@ public partial class SignielContext : DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(50)
                 .HasColumnName("title");
-            entity.Property(e => e.Trip)
-                .HasColumnType("bigint(20) unsigned")
-                .HasColumnName("trip");
 
             entity.HasOne(d => d.ScheduleNavigation).WithMany(p => p.TripDetails)
                 .HasForeignKey(d => d.Schedule)
                 .HasConstraintName("FK_trip_details_trip_schedules");
-
-            entity.HasOne(d => d.TripNavigation).WithMany(p => p.TripDetails)
-                .HasForeignKey(d => d.Trip)
-                .HasConstraintName("TRIP_DETAILS_TRIP_FK");
         });
 
         modelBuilder.Entity<TripDetailImage>(entity =>

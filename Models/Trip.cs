@@ -29,8 +29,6 @@ public partial class Trip
 
     public virtual User AuthorNavigation { get; set; } = null!;
 
-    public virtual ICollection<TripDetail> TripDetails { get; set; } = new List<TripDetail>();
-
     public virtual ICollection<TripImage> TripImages { get; set; } = new List<TripImage>();
 
     public virtual ICollection<TripSchedule> TripSchedules { get; set; } = new List<TripSchedule>();

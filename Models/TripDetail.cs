@@ -7,8 +7,6 @@ public partial class TripDetail
 {
     public ulong Id { get; set; }
 
-    public ulong Trip { get; set; }
-
     public ulong Schedule { get; set; }
 
     public string Location { get; set; } = null!;
@@ -20,6 +18,4 @@ public partial class TripDetail
     public virtual TripSchedule ScheduleNavigation { get; set; } = null!;
 
     public virtual ICollection<TripDetailImage> TripDetailImages { get; set; } = new List<TripDetailImage>();
-
-    public virtual Trip TripNavigation { get; set; } = null!;
 }

@@ -1,7 +1,11 @@
 using System.Net;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Models.Requests;
 using signiel.Contexts;
+using signiel.Models;
 using signiel.Models.Requests;
 using signiel.Models.Responses;
 using signiel.Services;
@@ -35,7 +39,7 @@ public class TripController : ControllerBase {
             select new TripRecommendDetail {
                 Id = recommend.Id,
                 Title = recommend.Title,
-                Items = recommend.TripRecommendItemRecommendNavigations.Select(item => new TripRecommendItem {
+                Items = recommend.TripRecommendItemRecommendNavigations.Select(item => new TripRecommendItemInfo {
                     Text = item.Text,
                     Image = item.Image,
                     Next = item.Next,
@@ -124,5 +128,64 @@ public class TripController : ControllerBase {
         }
 
         return APIResponse<TripInfoDetail>.FromData(trip);
+    }
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPost]
+    public async Task<APIResponse<ulong>> PostTrip([FromBody] TripRequest request) {
+        var trip = new Trip {
+            Author = ulong.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!),
+            Title = request.Title,
+            Content = request.Content,
+            Location = request.Location,
+            Thumbnail = request.Thumbnail,
+            Personnel = request.Personnel,
+            Price = request.Price,
+            Nights = request.Nights,
+            Days = request.Days,
+        };
+
+        foreach (var tag in request.Tags) {
+            trip.TripTags.Add(new TripTag {
+                Key = tag.Key,
+                Value = tag.Value,
+            });
+        }
+
+        foreach (var image in request.Images) {
+            trip.TripImages.Add(new TripImage {
+                Image = image,
+            });
+        }
+
+        foreach (var schedule in request.Schedules) {
+            var tripSchedule = new TripSchedule {
+                Title = schedule.Title,
+                Description = schedule.Description,
+            };
+
+            foreach (var location in schedule.Locations) {
+                var detail = new TripDetail() {
+                    Location = location.Location,
+                    Title = location.Title,
+                    Description = location.Description,
+                };
+
+                foreach (var image in location.Images) {
+                    detail.TripDetailImages.Add(new() {
+                        Image = image,
+                    });
+                }
+
+                tripSchedule.TripDetails.Add(detail);
+            }
+
+            trip.TripSchedules.Add(tripSchedule);
+        }
+
+        await _context.Trips.AddAsync(trip);
+        await _context.SaveChangesAsync();
+
+        return APIResponse<ulong>.FromData(trip.Id);
     }
 }

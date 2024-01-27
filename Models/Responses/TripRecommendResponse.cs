@@ -3,7 +3,7 @@ namespace signiel.Models.Responses;
 /// <summary>
 /// 투어 추천 아이템
 /// </summary>
-public class TripRecommendItem {
+public class TripRecommendItemInfo {
     /// <summary>
     /// 투어 추천 아이템 텍스트
     /// </summary>
@@ -37,7 +37,7 @@ public class TripRecommendDetail {
     /// <summary>
     /// 선택 아이템
     /// </summary>
-    public required List<TripRecommendItem> Items { get; set; }
+    public required List<TripRecommendItemInfo> Items { get; set; }
     /// <summary>
     /// 이미지 여부
     /// </summary>
