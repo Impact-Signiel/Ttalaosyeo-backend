@@ -130,6 +130,9 @@ public class TripController : ControllerBase {
         return APIResponse<TripInfoDetail>.FromData(trip);
     }
 
+    /// <summary>
+    /// 투어를 생성합니다. (인증 필요)
+    /// </summary>
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost]
     public async Task<APIResponse<ulong>> PostTrip([FromBody] TripRequest request) {

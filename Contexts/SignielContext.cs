@@ -14,6 +14,10 @@ public partial class SignielContext : DbContext
 
     public virtual DbSet<LandingBanner> LandingBanners { get; set; }
 
+    public virtual DbSet<LandingCard> LandingCards { get; set; }
+
+    public virtual DbSet<LandingCardTag> LandingCardTags { get; set; }
+
     public virtual DbSet<LandingSection> LandingSections { get; set; }
 
     public virtual DbSet<Trip> Trips { get; set; }
@@ -63,6 +67,49 @@ public partial class SignielContext : DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(50)
                 .HasColumnName("title");
+        });
+
+        modelBuilder.Entity<LandingCard>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("landing_cards");
+
+            entity.Property(e => e.Id)
+                .HasColumnType("bigint(20) unsigned")
+                .HasColumnName("id");
+            entity.Property(e => e.Image)
+                .HasMaxLength(500)
+                .HasColumnName("image");
+            entity.Property(e => e.Query)
+                .HasMaxLength(100)
+                .HasColumnName("query");
+            entity.Property(e => e.Title)
+                .HasMaxLength(100)
+                .HasColumnName("title");
+        });
+
+        modelBuilder.Entity<LandingCardTag>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("landing_card_tags");
+
+            entity.HasIndex(e => e.Card, "FK_landing_card_tags_landing_cards");
+
+            entity.Property(e => e.Id)
+                .HasColumnType("bigint(20) unsigned")
+                .HasColumnName("id");
+            entity.Property(e => e.Card)
+                .HasColumnType("bigint(20) unsigned")
+                .HasColumnName("card");
+            entity.Property(e => e.Text)
+                .HasMaxLength(50)
+                .HasColumnName("text");
+
+            entity.HasOne(d => d.CardNavigation).WithMany(p => p.LandingCardTags)
+                .HasForeignKey(d => d.Card)
+                .HasConstraintName("FK_landing_card_tags_landing_cards");
         });
 
         modelBuilder.Entity<LandingSection>(entity =>

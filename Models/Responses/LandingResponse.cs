@@ -13,6 +13,7 @@ public class LandingResponse {
     /// 섹션
     /// </summary>
     public required List<LandingSectionInfo> Sections { get; set; }
+    public required List<LandingCardInfo> Cards { get; set; }
 }
 
 public class LandingBannerInfo {
@@ -51,4 +52,23 @@ public class LandingSectionInfo {
     /// 섹션 카테고리 투어
     /// </summary>
     public required List<TripInfo> Trips { get; set; }
+}
+
+public class LandingCardInfo {
+    /// <summary>
+    /// 카드 제목
+    /// </summary>
+    public required string Title { get; set; }
+    /// <summary>
+    /// 카드 이미지
+    /// </summary>
+    public required string Image { get; set; }
+    /// <summary>
+    /// 카드 쿼리
+    /// </summary>
+    public required string Query { get; set; }
+    /// <summary>
+    /// 카드 카테고리
+    /// </summary>
+    public required List<string> Categories { get; set; }
 }

@@ -63,6 +63,15 @@ public class LandingController : ControllerBase {
                 }
             ).ToListAsync(),
             Sections = sections,
+            Cards = await (
+                from card in _context.LandingCards
+                select new LandingCardInfo {
+                    Title = card.Title,
+                    Image = card.Image,
+                    Query = card.Query,
+                    Categories = card.LandingCardTags.Select(tag => tag.Text).ToList(),
+                }
+            ).ToListAsync(),
         });
     }
 }

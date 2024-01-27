@@ -90,4 +90,28 @@ public class UserTripController : ControllerBase {
 
         return APIResponse<ulong>.FromData(tripInfo.Id);
     }
+
+    /// <summary>
+    /// 내 투어 목록에서 삭제합니다.
+    /// </summary>
+    [HttpDelete("trips/{id}")]
+    public async Task<APIResponse<ulong>> DeleteTrip([FromRoute] ulong id) {
+        var userId = ulong.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var tripInfo = await _context.UserTrips.FindAsync(id);
+
+        if (tripInfo == null) {
+            HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            return APIResponse<ulong>.FromError("Not Found");
+        }
+
+        if (tripInfo.User != userId) {
+            HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+            return APIResponse<ulong>.FromError("Forbidden");
+        }
+
+        _context.UserTrips.Remove(tripInfo);
+        await _context.SaveChangesAsync();
+
+        return APIResponse<ulong>.FromData(id);
+    }
 }
