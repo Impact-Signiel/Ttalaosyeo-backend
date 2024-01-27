@@ -58,7 +58,7 @@ public class TripSearchResponse : APIPagenationResponse {
 /// <summary>
 /// 투어 상세 응답
 /// </summary>
-public class TripDetail {
+public class TripInfoDetail {
     /// <summary>
     /// 투어 ID
     /// </summary>

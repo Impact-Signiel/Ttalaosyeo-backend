@@ -59,8 +59,8 @@ builder.Services.AddAuthentication(options => {
     o.TokenValidationParameters = new() {
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey
-        (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+        ValidAlgorithms = [SecurityAlgorithms.HmacSha512Signature],
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = false,

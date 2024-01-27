@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using signiel.Contexts;
 using signiel.Models;
 using signiel.Models.Requests;
+using signiel.Models.Responses;
 
 namespace signiel.Services;
 
@@ -75,5 +76,51 @@ public class TripService {
 
     public async Task<List<Trip>> SearchAsync(string query, int? page = null, int? limit = null) {
         return await Query(query, page, limit).ToListAsync();
+    }
+
+    public async Task<TripInfoDetail[]> GetDetailsAsync(IQueryable<Trip> query) {
+        var trips = await (
+            from t in query
+            select new TripInfoDetail {
+                Id = t.Id,
+                Author = new() {
+                    Id = t.Author,
+                    Nickname = t.AuthorNavigation.Nickname,
+                },
+                Title = t.Title,
+                Content = t.Content,
+                Location = t.Location,
+                Personnel = t.Personnel,
+                Price = t.Price,
+                Nights = t.Nights,
+                Days = t.Days,
+                CreatedAt = t.CreatedAt,
+                Tags = t.TripTags.Select(tag => new KeyValuePair<string, string>(tag.Key, tag.Value)).ToList(),
+                Thumbnail = t.Thumbnail,
+                Schedules = t.TripSchedules.Select(schedule => new TripScheduleDetail {
+                    Day = 0,
+                    Title = schedule.Title,
+                    Description = schedule.Description,
+                    Locations = schedule.TripDetails.Select(location => new TripScheduleLocationDetail {
+                        Location = location.Location,
+                        Title = location.Title,
+                        Description = location.Description,
+                        Images = location.TripDetailImages.Select(image => image.Image).ToList(),
+                    }).ToList(),
+                }).ToList(),
+            }
+        ).ToArrayAsync();
+
+        foreach (var trip in trips) {
+            foreach (var schedule in trip.Schedules) {
+                schedule.Day = trip.Schedules.IndexOf(schedule) + 1;
+            }
+        }
+
+        return trips;
+    }
+
+    public async Task<TripInfoDetail?> GetDetailAsync(ulong id) {
+        return (await GetDetailsAsync(_context.Trips.Where(trip => trip.Id == id))).FirstOrDefault();
     }
 }

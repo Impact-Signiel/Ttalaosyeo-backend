@@ -14,4 +14,6 @@ public partial class User
     public string Password { get; set; } = null!;
 
     public virtual ICollection<Trip> Trips { get; set; } = new List<Trip>();
+
+    public virtual ICollection<UserTrip> UserTrips { get; set; } = new List<UserTrip>();
 }

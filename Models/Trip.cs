@@ -36,4 +36,6 @@ public partial class Trip
     public virtual ICollection<TripSchedule> TripSchedules { get; set; } = new List<TripSchedule>();
 
     public virtual ICollection<TripTag> TripTags { get; set; } = new List<TripTag>();
+
+    public virtual ICollection<UserTrip> UserTrips { get; set; } = new List<UserTrip>();
 }

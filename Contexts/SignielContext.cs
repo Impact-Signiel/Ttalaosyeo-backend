@@ -34,6 +34,8 @@ public partial class SignielContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UserTrip> UserTrips { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -344,6 +346,36 @@ public partial class SignielContext : DbContext
             entity.Property(e => e.Password)
                 .HasMaxLength(128)
                 .HasColumnName("password");
+        });
+
+        modelBuilder.Entity<UserTrip>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("user_trips");
+
+            entity.HasIndex(e => e.Trip, "FK__trips");
+
+            entity.HasIndex(e => e.User, "FK_user_trips_users");
+
+            entity.Property(e => e.Id)
+                .HasColumnType("bigint(20) unsigned")
+                .HasColumnName("id");
+            entity.Property(e => e.Date).HasColumnName("date");
+            entity.Property(e => e.Trip)
+                .HasColumnType("bigint(20) unsigned")
+                .HasColumnName("trip");
+            entity.Property(e => e.User)
+                .HasColumnType("bigint(20) unsigned")
+                .HasColumnName("user");
+
+            entity.HasOne(d => d.TripNavigation).WithMany(p => p.UserTrips)
+                .HasForeignKey(d => d.Trip)
+                .HasConstraintName("FK__trips");
+
+            entity.HasOne(d => d.UserNavigation).WithMany(p => p.UserTrips)
+                .HasForeignKey(d => d.User)
+                .HasConstraintName("FK_user_trips_users");
         });
 
         OnModelCreatingPartial(modelBuilder);
