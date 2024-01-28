@@ -30,12 +30,12 @@ public class TripRequest {
     /// <summary>
     /// N박
     /// </summary>
-    [Required, Range(1, uint.MaxValue)]
+    [Required, Range(0, uint.MaxValue)]
     public required uint Nights { get; set; }
     /// <summary>
     /// N일
     /// </summary>
-    [Required, Range(1, uint.MaxValue)]
+    [Required, Range(0, uint.MaxValue)]
     public required uint Days { get; set; }
     /// <summary>
     /// 투어 태그
